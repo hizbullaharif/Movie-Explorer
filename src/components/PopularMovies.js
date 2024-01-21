@@ -40,8 +40,9 @@ const PopularMovie = memo(({movie}) => {
 export default PopularMovie;
 
 const styles = StyleSheet.create({
-  container:{
-    flex: 1, marginRight: scale(15)
+  container: {
+    flex: 1,
+    marginRight: scale(15),
   },
   movieTitle: {
     fontSize: scale(16),

@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React, {memo, useCallback} from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -27,6 +27,7 @@ const Rating = ({rating}) => {
     </View>
   );
 };
+
 const handleError = ({msg}) => {
   Toast.show({
     type: 'error',
@@ -34,6 +35,22 @@ const handleError = ({msg}) => {
     text2: msg,
   });
 };
+
+const BackgroundImage = memo(({handleGoBack, imageId}) => (
+  <ImageBackground
+    source={{
+      uri: `https://image.tmdb.org/t/p/w780/${imageId}`,
+    }}
+    style={styles.imageBackground}>
+    <CustomTouchableOpacity
+      onPress={handleGoBack}
+      style={{
+        marginTop: scale(25),
+      }}>
+      <ArrowBack />
+    </CustomTouchableOpacity>
+  </ImageBackground>
+));
 
 const MovieDetails = props => {
   const {movieId} = props?.route?.params;
@@ -57,7 +74,7 @@ const MovieDetails = props => {
     handleError(errorById?.msg);
   }
 
-  const handleAddToFavorite = () => {
+  const handleAddToFavorite = useCallback(() => {
     const movie = {
       id: dataById?.id,
       title: dataById?.title,
@@ -65,27 +82,18 @@ const MovieDetails = props => {
       release_date: dataById?.release_date,
     };
     dispatch(addToFavorites(movie));
-  };
+  }, [dataById, dispatch]);
 
-  const BackgroundImage = memo(() => (
-    <ImageBackground
-      source={{
-        uri: `https://image.tmdb.org/t/p/w780/${dataById?.poster_path}`,
-      }}
-      style={styles.imageBackground}>
-      <CustomTouchableOpacity
-        onPress={() => navigation.goBack()}
-        style={{
-          marginTop: scale(25),
-        }}>
-        <ArrowBack />
-      </CustomTouchableOpacity>
-    </ImageBackground>
-  ));
+  const handleGoBack = useCallback(() => {
+    navigation.goBack();
+  }, []);
 
   return (
     <View style={styles.container}>
-      <BackgroundImage />
+      <BackgroundImage
+        handleGoBack={handleGoBack}
+        imageId={dataById?.poster_path}
+      />
       <View style={styles.detailsContainer}>
         <LinearGradient
           start={{x: 1, y: 1}}
