@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -16,6 +16,7 @@ import Favourite from '../../assets/svg/favourite.js';
 import {useGetMovieByIdQuery} from '../../redux/Services/movies.js';
 import {useDispatch, useSelector} from 'react-redux';
 import {addToFavorites} from '../../redux/slices/favoriteMoviesSlice.js';
+import Toast from 'react-native-toast-message';
 
 const HEIGHT = Dimensions.get('screen').height / 4;
 
@@ -25,6 +26,13 @@ const Rating = ({rating}) => {
       <Text style={styles.ratingText}>{rating} Star rating</Text>
     </View>
   );
+};
+const handleError = ({msg}) => {
+  Toast.show({
+    type: 'error',
+    text1: 'Error',
+    text2: msg,
+  });
 };
 
 const MovieDetails = props => {
@@ -45,6 +53,10 @@ const MovieDetails = props => {
     isFetching: isFetchingById,
   } = useGetMovieByIdQuery(movieId);
 
+  if (errorById) {
+    handleError(errorById?.msg);
+  }
+
   const handleAddToFavorite = () => {
     const movie = {
       id: dataById?.id,
@@ -55,17 +67,21 @@ const MovieDetails = props => {
     dispatch(addToFavorites(movie));
   };
 
-  const BackgroundImage = () => (
+  const BackgroundImage = memo(() => (
     <ImageBackground
       source={{
         uri: `https://image.tmdb.org/t/p/w780/${dataById?.poster_path}`,
       }}
       style={styles.imageBackground}>
-      <CustomTouchableOpacity onPress={() => navigation.goBack()}>
+      <CustomTouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={{
+          marginTop: scale(25),
+        }}>
         <ArrowBack />
       </CustomTouchableOpacity>
     </ImageBackground>
-  );
+  ));
 
   return (
     <View style={styles.container}>
@@ -80,7 +96,11 @@ const MovieDetails = props => {
             <Text style={styles.titleText}>{dataById?.title}</Text>
             <CustomTouchableOpacity onPress={handleAddToFavorite}>
               <Favourite
-                fill={isFavourite? theme.palette.SecondaryLight: theme.palette.white}
+                fill={
+                  isFavourite
+                    ? theme.palette.SecondaryLight
+                    : theme.palette.white
+                }
               />
             </CustomTouchableOpacity>
           </View>

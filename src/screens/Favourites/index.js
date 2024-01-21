@@ -8,6 +8,7 @@ import PopularMovie from '../../components/PopularMovies';
 import styles from './styles';
 import CustomTouchableOpacity from '../../components/CustomTouchableOpacity';
 import ArrowBack from '../../assets/svg/ArrowBack.svg';
+import {scale} from '../../utils/scale';
 
 const Favorites = () => {
   const navigation = useNavigation();
@@ -21,7 +22,11 @@ const Favorites = () => {
       navigation.goBack();
     };
     return (
-      <CustomTouchableOpacity onPress={goBack}>
+      <CustomTouchableOpacity
+        onPress={goBack}
+        style={{
+          marginTop: scale(25),
+        }}>
         <ArrowBack />
       </CustomTouchableOpacity>
     );

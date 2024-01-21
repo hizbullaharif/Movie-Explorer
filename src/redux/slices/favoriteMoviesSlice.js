@@ -12,7 +12,6 @@ const favoriteMoviesSlice = createSlice({
   reducers: {
     addToFavorites: (state, action) => {
       const movie = action.payload;
-      console.log(movie);
       const isExist = state.favoriteMovies?.some(
         movie_ => movie_.id == movie.id,
       );

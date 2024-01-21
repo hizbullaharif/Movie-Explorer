@@ -12,6 +12,7 @@ import {
   useGetPopularMoviesQuery,
 } from '../../redux/Services/movies';
 import PopularMovie from '../../components/PopularMovies';
+import Toast from 'react-native-toast-message';
 
 const Header = () => {
   return (
@@ -28,6 +29,13 @@ const Header = () => {
     </>
   );
 };
+const handleError = msg => {
+  Toast.show({
+    type: 'error',
+    text1: 'Error',
+    text2: msg,
+  });
+};
 const Home = () => {
   const {data, error, isLoading, isFetching} = useGetPopularMoviesQuery();
 
@@ -37,6 +45,10 @@ const Home = () => {
     isLoading: isLoadingById,
     isFetching: isFetchingById,
   } = useGetMovieByLatestQuery({count: 5});
+
+  if (errorById || error) {
+    handleError(errorById || errorById);
+  }
 
   const HomeHeader = () => {
     return (
@@ -68,8 +80,8 @@ const Home = () => {
   return (
     <Frame headerVariant="v1">
       <FlatList
-        ListHeaderComponent={<HomeHeader />}
         keyExtractor={item => item?.id}
+        ListHeaderComponent={<HomeHeader />}
         numColumns={2}
         data={dataByLatest?.results}
         showsVerticalScrollIndicator={false}
